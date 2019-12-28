@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security权限管理</title>
+    <link rel="stylesheet" href="static/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="static/bootstrap-table/dist/bootstrap-table.css" />
+    <link rel="stylesheet" href="webjars/bootstrap-select/2.0.0-beta1/dist/css/bootstrap-select.css" />
+    <link rel="stylesheet" href="static/bootstrap-table/dist/extensions/treegrid/treegrid.css" />
+    <link rel="stylesheet" href="static/combotree/bootstrap-treeview.css" />
+    <script src="static/bootstrap/dist/js/jquery.js" ></script>
+    <script src="static/bootstrap/dist/js/bootstrap.js" ></script>
+    <script src="static/bootstrap-table/dist/bootstrap-table.js" ></script>
+    <script src="static/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js" ></script>
+    <script src="webjars/bootstrap-select/2.0.0-beta1/dist/js/bootstrap-select.js" ></script>
+    <script src="static/bootstrap-table/dist/extensions/treegrid/bootstrap-table-treegrid.js" ></script>
+    <script src="static/bootstrap-table/dist/extensions/treegrid/jquery.treegrid.js" ></script>
+    <script src="static/combotree/bootstrap-treeview.js" ></script>
+    <script src="static/combotree/combotree.js" ></script>
+    <script src="webjars/bootbox/4.4.0/bootbox.js"></script>
+    <script src="static/verTree/verTree.js"></script>
+    <style type="text/css">
+        #main{
+            overflow: hidden;
+        }
+        #accordion .card .card-header a{
+            display: block;
+        }
+        #main_nav{
+            width: 15%;
+            display: inline-block;
+            border-right: 1px solid rgba(0, 0, 0, 0.125);
+            box-sizing:border-box;
+            height: 100%;
+        }
+        #main_nav:hover{
+            overflow: auto;
+        }
+        #main_home{
+            width: 84%;
+            padding: 20px 15px;
+            display: inline-block;
+            vertical-align: top;
+            height: 100%;
+            overflow: auto;
+        }
+        .panel .panel-heading{
+            padding-bottom: 0.1px;
+        }
+        .panel-group .panel + .panel{
+            margin-top: 0px;
+        }
+        .panel-body{
+            padding: 10px 0px;
+        }
+        .panel-group{
+            margin-bottom: 0px;
+        }
+        .panel-collapse p{
+            margin: 0px;
+            padding: 6px 25px;
+        }
+        .panel-collapse p:hover, .nav_p p:hover{
+            cursor: pointer;
+            background: blueviolet;
+        }
+        .panel-heading > h4 > p{
+            font-size: 20px;
+        }
+        .panel-heading > h4 > p > span{
+            margin-left: 70px;
+        }
+        .panel-body p{
+            text-indent: 20px;
+            font-size: 18px;
+            font-family: "楷体";
+        }
+        .panel-heading > h4 > p:hover, .panel-body p:hover, #nav_p p:hover{
+            cursor: pointer;
+        }
+        #nav_p p{
+            font-size: 20px;
+            padding: 5px 3px 8px 15px;
+            border-bottom: 1px solid #7FFFD4;
+        }
+        .panel-heading > h4 > p > span{
+             margin-left: 0px;
+        }
+        .panel-heading > h4 > p > .caret{
+            margin-left: 70px;
+        }
+    </style>
+</head>
+<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+    <div class="container-fluid">
+        <!--navbar-header导航栏标题头-->
+        <div class="navbar-header">
+            <!--屏幕缩小使页面收缩显示的小图标，data-target="#menu"对应下面的id，点击展开-->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+                <span class="sr-only">展开导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--navbar-brand定义网站标题-->
+            <a class="navbar-brand" href="">Security权限管理</a>
+        </div>
+
+        <!--定义主体-->
+        <div class="collapse navbar-collapse" id="menu">
+            <!--定义主体，靠右显示-->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="main">
+    <div id="main_nav">
+        <div class="panel-group" id="accordion" style="margin-bottom: 0;">
+            <div th:each="menu, menuStat: ${menus}" th:if="${menu.children.size() != 0 && menu.children != null}" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <p data-toggle="collapse" data-parent="#accordion" th:href="|#collapseOne${menuStat.index}|">
+                            <span th:text="${menu.name}">系统设置</span><span class="caret"></span>
+                        </p>
+                    </h4>
+                </div>
+                <div th:if="${menuStat.first}" th:id="|collapseOne${menuStat.index}|" class="panel-collapse collapse collapse in">
+                    <div class="panel-body">
+                        <p th:each="subMenu:${menu.children}" th:src="${subMenu.url}" th:text="${subMenu.name}">菜单管理</p>
+                    </div>
+                </div>
+                <div th:if="${!menuStat.first}" th:id="|collapseOne${menuStat.index}|" class="panel-collapse collapse collapse">
+                    <div class="panel-body">
+                        <p th:each="subMenu:${menu.children}" th:src="${subMenu.url}" th:text="${subMenu.name}">菜单管理</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="nav_p">
+            <p th:each="menu:${menus}" th:if="${menu.children.size() == 0}" th:src="${menu.url}" th:text="${menu.name}">成绩管理</p>
+        </div>
+    </div>
+    <div id="main_home">
+        首页内容
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        var height = window.innerHeight-58+"px";
+        $("#main").css('height', height);
+
+        $("p[src]").click(function(){
+            var src = $(this).attr("src");
+            if(src != ""){
+                $("#main_home").load(src);
+            }
+        });
+
+        bootbox.setDefaults({
+            locale:'zh_CN',
+            size: 'small',
+            title:'提示'
+        });
+    });
+    $(window).resize(function(){
+        var height = window.innerHeight-58+"px";
+        $("#main").css('height', height);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<meta charset="UTF-8">
+<body>
+    <!-- 增删改 -->
+    <div id="toolbar" class="btn-group">
+        <button type="button" class="btn btn-default" onclick="btn_add()">
+            <span class="glyphicon glyphicon-plus"></span>新增
+        </button>
+        <button type="button" class="btn btn-default" onclick="btn_edit()">
+            <span class="glyphicon glyphicon-pencil"></span>修改
+        </button>
+        <button type="button" class="btn btn-default" onclick="btn_delete()">
+            <span class="glyphicon glyphicon-remove"></span>删除
+        </button>
+    </div>
+
+    <table id="menu_table"></table>
+
+    <script type="text/javascript">
+        var $table = $("#menu_table");
+
+        $("#menu_table").bootstrapTable({
+            url: 'menu/list',    //表格数据请求地址
+            toolbar: '#toolbar',    //自定义组件
+            striped: true,	//隔行换色
+            height: tableHeight(),		//设置高度
+            pagination: false,	//显示表格的底部工具栏
+            sidePagination: 'server',   //client客户端分页，server服务器分页
+            search: false,		//定义右上方的搜索框，输入即可以开始搜索
+            showColumns: true,	//选列的下拉菜单
+            showRefresh: true,	//刷新按钮
+            showToggle: true,	//视图切换
+            toolbarAlign: 'left',	//自定义按钮位置
+            clickToSelect: true,	//点击行选中
+            singleSelect: true,		//单选
+            // 设置树状表格参数
+            treeShowField: 'name',
+            sortName:'id',
+            parentIdField: 'parentId',		//父节点id
+            onLoadSuccess: function(data) {
+                //console.log(data);
+                $table.treegrid({
+                    initialState: 'expanded',//展开
+                    treeColumn: 1,//指明第几列数据改为树形
+                    expanderExpandedClass: 'glyphicon glyphicon-triangle-bottom',
+                    expanderCollapsedClass: 'glyphicon glyphicon-triangle-right',
+                    onChange: function() {
+                        $table.bootstrapTable('resetWidth');
+                    }
+                });
+            },
+            columns:[{
+                checkbox: true    //多选框
+            },{
+                field: 'id',	//每列的字段名
+                title: 'ID',	//表头所显示的名字
+                halign: 'center',	//表头的对齐方式
+                valign: 'middle',	//表格对齐方式居中
+                order: 'asc',		//默认排序方式
+                sortable: true,		//设置可以排序
+                align: 'center'		//表格数据对齐方式
+            },{
+                field: 'name',
+                title: '名称',
+                halign: 'center',
+                align: 'center'
+            },{
+                field: 'url',
+                title: '路径',
+                halign: 'center',
+                align: 'center'
+            },{
+                field: 'idx',
+                title: '排序',
+                halign: 'center',
+                align: 'center'
+            }]
+        });
+
+        function tableHeight() {
+            return $(window).height() - 100;
+        }
+
+        //新增
+        function btn_add(){
+            var selectRows = $table.bootstrapTable('getSelections');
+            var dialog = $('<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel"></div>');
+            if(selectRows&&selectRows.length==1){
+                var parentId=selectRows[0].id;
+                dialog.load('menu/edit',{parentId:parentId});
+            }else{
+                dialog.load('menu/edit');
+            }
+            $("body").append(dialog);
+            dialog.modal().on('hidden.bs.modal', function () {
+                dialog.remove();
+                $table.bootstrapTable('refresh');
+            });
+        }
+
+        //修改
+        function btn_edit(){
+            var str = $("#menu_table").bootstrapTable('getSelections');
+            if(str.length != 1){
+                bootbox.alert("请选中一行进行编辑");
+                return ;
+            }
+
+            var dialog = $('<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel"></div>');
+            var id = str[0].id;
+            dialog.load("menu/edit?id="+id);
+            /*添加到body中*/
+            $("body").append(dialog);
+            /*弹出模态框,绑定关闭后的事件*/
+            dialog.modal().on('hidden.bs.modal', function () {
+                //删除模态框
+                dialog.remove();
+                $table.bootstrapTable('refresh');
+            });
+        }
+
+        /*删除*/
+        function btn_delete(){
+            var str = $("#menu_table").bootstrapTable('getSelections');
+            if(str.length != 1){
+                bootbox.alert("请选中一行进行删除");
+            }else{
+                bootbox.confirm("确定删除选中这一行吗?", function(s){
+                    if(s){
+                        var id = str[0].id;
+                        $.post('menu/delete',{id:id},function(){
+                            /* refresh刷新 */
+                            $("#menu_table").bootstrapTable('refresh');
+                            bootbox.alert('<h4>'+"删除成功！"+'</h4>');
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</body>

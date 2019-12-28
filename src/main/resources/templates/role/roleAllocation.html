@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body>
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">权限分配</h4>
+        </div>
+        <div class="modal-body">
+            <form id="myForm">
+                <div id="tree" style="margin-left: 10%;"></div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="btnSubmit()" class="btn btn-primary">
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+            </button>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    var defaults = [[${defaults}]];
+    defaults = defaults.substring(1, defaults.length-1);
+    var data = defaults.split(',');
+    new verTree({
+        items:"#tree",
+        type:"form",
+        data: getData(),
+        parent: "parentId",
+        params: "id",
+        value: "name",
+        open_close: 'open',
+        defaults: data
+    });
+
+    function getData(){
+        var data = "";
+        $.ajax({
+            url: "role/treeData",    //后台数据请求地址
+            type: "post",
+            async:false,
+            success: function(resut){
+                data = resut;
+            }
+        });
+        return data;
+    }
+
+    function btnSubmit() {
+        var data = $(".icon-check-box-cicre").next();
+        var ids = "";
+        for (x = 0; x < data.length; x ++){
+            ids += data[x].value+",";
+        }
+        if(ids != "" && ids != "null"){
+            ids = ids.substr(0, ids.length-1);
+        }
+        $.ajax({
+            url: 'role/treeSave',
+            type: 'post',
+            data: {"ids": ids, "id": [[${id}]]},
+            success: function(result){
+                if(result.success){
+                    $("#myModal").modal("hide");
+                    bootbox.alert("数据保存成功");
+                }else{
+                    bootbox.alert(result.msg);
+                }
+            },
+            error: function(result){
+                bootbox.alert("数据保存失败！");
+            }
+        })
+    }
+</script>
+</body>

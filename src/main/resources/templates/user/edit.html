@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body>
+<form id="myForm" class="form-horizontal" role="form" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">操作</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id" data-th-value="${model.id}">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">姓名</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="name" data-th-value="${model.name}" class="form-control" placeholder="姓名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户名</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="username" data-th-value="${model.username}" class="form-control" placeholder="用户名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">住址</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="address" data-th-value="${model.address}" class="form-control" placeholder="地址">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">角色</label>
+                    <div class="col-sm-9">
+                        <select class="form-control selectpicker" name="roles" multiple>
+                            <option data-th-each="role:${roles}" data-th-value="${role.name}"
+                                    data-th-selected="${#strings.contains(model.roleNames, role.name)}"
+                                    data-th-text="${role.name}">普通用户</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="btnSubmit()" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:inline="javascript">
+    function btnSubmit() {
+        var form= new FormData($("#myForm")[0]);
+        $.ajax({
+            url: 'user/save',
+            type: 'post',
+            data: form,
+            processData: false,  //不处理数据
+            contentType: false,		//不设置内容类型
+            success: function(result){
+                if(result.success){
+                    $("#myModal").modal("hide");
+                    bootbox.alert("数据保存成功");
+                }else{
+                    bootbox.alert(result.msg);
+                }
+            },
+            error: function(result){
+                bootbox.alert("数据保存失败！");
+            }
+        })
+    }
+
+    $(function() {
+        $('.selectpicker').selectpicker({
+            title: "选择角色"
+        });
+    });
+</script>
+</body>

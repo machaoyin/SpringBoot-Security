@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Security登录</title>
+    <link rel="stylesheet" href="static/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<div class="panel panel-primary" style="width: 500px; margin: 5% auto;">
+    <div class="panel-heading">登录</div>
+    <div class="panel-body">
+        <form action="login" method="post" class="form-horizontal">
+            <!--用户名或密码错误提示-->
+            <div th:if="${param.error != null}">
+                <div class="alert alert-danger">
+                    <p color="red">用户名或密码错误！</p>
+                </div>
+            </div>
+            <!--注销提示-->
+            <div th:if="${param.logout != null}">
+                <div class="alert alert-success">
+                    <p color="red">注销成功！</p>
+                </div>
+            </div>
+            <div class="input-group input-sm" style="margin-bottom: 10px">
+                <label class="input-group-addon"><i class="glyphicon glyphicon-user"></i></label>
+                <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+            </div>
+            <div class="input-group input-sm" style="margin-bottom: 10px">
+                <label class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></label>
+                <input type="password" class="form-control" name="password" placeholder="请输入密码">
+            </div>
+            <div class="form-actions">
+                <input type="submit" class="btn btn-block btn-primary btn-default" value="登录">
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

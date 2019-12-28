@@ -1,0 +1,78 @@
+<meta charset="UTF-8">
+<body>
+    <form id="myForm" class="form-horizontal" role="form" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">操作</h4>
+                </div>
+                <div class="modal-body">
+
+                    <!-- 以下为要修改的的内容 -->
+                    <input type="hidden" name="id" th:value="${model.id}" id="modelId">
+                    <div class="form-group">
+                        <label for="txt_parent" class="col-sm-2 control-label">上级菜单</label>
+                        <div class="col-sm-9">
+                            <input name="parentId" data-th-value="${model.parent==null?null:model.parent.id}" class="form-control" id="txt_parent">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_name" class="col-sm-2 control-label">菜单名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" data-th-value="${model.name}" class="form-control" id="txt_name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_url" class="col-sm-2 control-label">访问地址</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="url" data-th-value=${model.url} class="form-control" id="txt_url" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_sort" class="col-sm-2 control-label">排序</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="idx" data-th-value="${model.idx}" class="form-control" id="txt_sort">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="btnSubmit()" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+
+<script th:inline="javascript">
+    $(function(){
+        $('#txt_parent').bootstrapCombotree({
+            url:'menu/treedata?id='+$('#modelId').val()
+        });
+
+        $('.selectpicker').selectpicker({});
+    });
+    
+    function btnSubmit() {
+        var form= new FormData($("#myForm")[0]);
+        $.ajax({
+            url: 'menu/save',
+            type: 'post',
+            data: form,
+            processData: false,  //不处理数据
+            contentType: false,		//不设置内容类型
+            success: function(result){
+                if(result.success){
+                    $("#myModal").modal("hide");
+                    bootbox.alert("数据保存成功");
+                }else{
+                    bootbox.alert(result.msg);
+                }
+            },
+            error: function(result){
+                bootbox.alert("数据保存失败！");
+            }
+        })
+    }
+</script>

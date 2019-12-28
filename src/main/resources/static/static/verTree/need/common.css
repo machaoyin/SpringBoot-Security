@@ -1,0 +1,56 @@
+.green {
+    color: #2ca02c;
+}
+
+.red {
+    color: #c21;
+}
+
+.blue {
+    color: #1B9AF7;
+}
+ul,li,ol{
+    list-style: none;
+    font-size: 16px;
+    margin-top: 3px;
+}
+.tree-form-box{
+    vertical-align: top;
+    border-radius: 5px;
+    display: inline-block;
+}
+i.tree-option{
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.ver-tree-levels-show{
+    display: block !important;
+}
+.ver-tree-levels-hide{
+    display: none !important;
+}
+
+.tree-list{
+    width: 100%;
+}
+
+.tree-list tbody{
+    width: 100%;
+}
+
+.tree-list tbody tr{
+    width: 100%;
+}
+
+.ver-tree-check,.ver-tree-check-all{
+    cursor: pointer;
+}
+
+.ver-tree-table-hide{
+    display: none;
+}
+
+.ver-tree-levels ul{
+    padding:0 50px !important;
+}
